@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>marble test</title>
+		<!-- Qunit stuff -->
+		
+		<script src="libs/qunit.js"></script>
+		<link rel="stylesheet" type="text/css" href="libs/qunit.css">
+		<style>
+			.marble { height: 400px; }
+		</style>
+
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+
+		<div class="marble">
+			<script src="../dist/marble-latest.js" data-img="../pics/pic.jpg"></script>
+		</div>
+
+		<script>
+			asyncTest("Image inserted", function(){
+
+				//	Check that marble is ready, then run test
+				//	Note: as the JS is inserted synchrnously, 
+				//	it should init, but image takes time to load.
+
+				var imgs = document.getElementsByClassName('marble');
+				ok(imgs.length > 0, "Img inserted");
+				start();
+			});
+		</script>
+	</body>
+</html>

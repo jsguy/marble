@@ -1,0 +1,41 @@
+<head>
+	<style type="text/css">body { margin: 0; }</style>
+	<script src="../node_modules/three/three.js"></script>
+	<script src="../node_modules/ulib/src/ulib.pubsub.js"></script>
+	<script src="../node_modules/ulib/src/ulib.utils.js"></script>
+	<script src="../node_modules/ulib/src/ulib.url.js"></script>
+	<script src="../src/prefix.js"></script>
+	<style type="text/css">
+		.container { width: 60rem; margin: 0 auto; }
+		.image-surround { height: 280px; }
+		html, body { font-family: 'Open Sans', sans-serif; }
+	</style>
+</head>
+<body>
+	<script src="../src/screenfull.js"></script>
+	<script src="../src/pep.js"></script>
+
+	<div class="container">
+		<h1>360 degree images</h1>
+
+		<p>
+			In this example the user clicks, and we use javascript to insert the images into the DOM.
+		</p>
+
+        <a href="#" onclick="window.marble.init(document.getElementsByTagName('span')[0], {img: '../pics/chateau_polin.jpg', clicktotogglespin: true})">Insert First</a>, 
+        <a href="#" onclick="window.marble.init(document.getElementsByTagName('span')[1], {img: '../pics/barangaroo.jpg', clicktotogglespin: true})">Insert Second</a>
+
+
+		<h2>Hunter vallery retreat</h2>
+		<div class="image-surround">
+			<span></span>
+		</div>
+
+		<h2>Barangaroo</h2>
+		<div class="image-surround">
+			<span></span>
+		</div>
+		<script src="../src/marble.js"></script>
+	</div>
+</body>
+</html>

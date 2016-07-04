@@ -1,0 +1,40 @@
+<head>
+	<style type="text/css">body { margin: 0; }</style>
+	<script src="../node_modules/three/three.js"></script>
+	<script src="../node_modules/ulib/src/ulib.pubsub.js"></script>
+	<script src="../node_modules/ulib/src/ulib.utils.js"></script>
+	<script src="../node_modules/ulib/src/ulib.url.js"></script>
+	<script src="../src/prefix.js"></script>
+	<style type="text/css">
+		.container { width: 60rem; margin: 0 auto; }
+		.image-surround { height: 480px; }
+		html, body { font-family: 'Open Sans', sans-serif; }
+	</style>
+</head>
+<body>
+	<script src="../src/screenfull.js"></script>
+	<script src="../src/pep.js"></script>
+
+	<div class="container">
+		<h1>360 degree images</h1>
+		<p>
+			The pictures below were taken with a <a href="https://theta360.com/en/about/theta/s.html" target="_blank">Ricoh Theta S camera</a>, click to start a photo spinning, click and drag to see it at your own pace.
+		</p>
+
+		<p>
+			In this example, notice how the first image behave when you start interacting with the second - it stops rendering, so as to not over-burden the browser. You can set data-behave="false" to turn this feature off.
+		</p>
+
+		<h2>Hunter vallery retreat</h2>
+		<div class="image-surround">
+			<script src="../src/marble.js" data-img="../pics/chateau_polin.jpg" data-horizontal="200" data-vertical="-26" data-clickToToggleSpin="true" data-animate="true"></script>
+		</div>
+
+		<h2>On the ferry</h2>
+		<div class="image-surround">
+			<script src="../src/marble.js" data-img="../pics/pic_4096x2048_medium.jpg" data-horizontal="180" data-vertical="5" data-startspin="false" data-clickToToggleSpin="true"></script>
+		</div>
+
+	</div>
+</body>
+</html>
