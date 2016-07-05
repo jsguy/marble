@@ -1,16 +1,17 @@
 # marble - 360° image viewer
 
-This image viewer will display 360° images, and is based on three.js
+This image viewer displays 360° images, 
+It is based on three.js
 
 ## Installation
 
-You don't actually need to install anything, you can simply refer to (once the repository becomes public!):
+You don't actually need to install anything, you can simply refer to the CDN file here:
 
 ```
 https://cdn.rawgit.com/jsguy/marble/master/dist/marble-latest.min.js
 ```
 
-Optionally, if you prefer to host the JS yourself, place the JS file `dist/marble-latest.min.js` on your server, you just need that one file.
+Optionally, if you prefer to host the JS yourself, place the JS file `dist/marble-latest.min.js` on your server - you just need that one file.
 
 ## Usage
 
@@ -24,7 +25,7 @@ These examples will each show a 360 degree image at 100% width, 480px height, or
 <script src="marble-latest.min.js"></script>
 ```
 
-### With a script tag:
+### With a single script tag:
 
 ```html
 <script src="marble-latest.min.js" data-img="pic.jpg"></script>
