@@ -4,13 +4,23 @@ This image viewer displays equirectangular 360° images, and is based on three.j
 
 ## Installation
 
-You don't actually need to install anything, you can simply refer to the CDN file here:
+You can install marble via bower:
+
+```
+bower install marble
+```
+
+Then reference the marble js file like so:
+
+```html
+<script src="bower_components/marble/dist/marble-latest.min.js"></script>
+```
+
+Or use the CDN file from here:
 
 ```
 https://cdn.rawgit.com/jsguy/marble/master/dist/marble-latest.min.js
 ```
-
-Optionally, if you prefer to host the JS yourself, place the JS file `dist/marble-latest.min.js` on your server - you just need that one file.
 
 ## Usage
 
