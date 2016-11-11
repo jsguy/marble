@@ -1,7 +1,6 @@
-# marble - 360° image viewer
+# Marble - 360° image viewer
 
-This image viewer displays 360° images, 
-It is based on three.js
+This image viewer displays equirectangular 360° images, and is based on three.js
 
 ## Installation
 
