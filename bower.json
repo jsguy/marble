@@ -1,0 +1,24 @@
+{
+  "name": "marble",
+  "description": "360 degree equirectangular image viewer",
+  "main": "dist/marble-latest.min.js",
+  "authors": [
+    "jsguy <mikkel@pointful.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "360",
+    "degree",
+    "image",
+    "viewer",
+    "equirectangular"
+  ],
+  "homepage": "https://github.com/jsguy/marble",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
