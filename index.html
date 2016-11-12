@@ -16,5 +16,92 @@
 		data-slideshowdelay="6000">
 	</script>
 	<a class="github" href="https://github.com/jsguy/marble" target="_blank">Github</a>
+
+
+<article class="markdown-body entry-content" itemprop="text"><h1><a id="user-content-marble---360-image-viewer" class="anchor" href="#marble---360-image-viewer" aria-hidden="true"></a>Marble - 360 degree image viewer</h1>
+
+<p>This image viewer displays equirectangular 360 degree images, and is based on three.js</p>
+
+<h2><a id="user-content-installation" class="anchor" href="#installation" aria-hidden="true"></a>Installation</h2>
+
+<p>You can install marble via bower:</p>
+
+<pre><code>bower install marble
+</code></pre>
+
+<p>Then reference the marble js file like so:</p>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/marble/dist/marble-latest.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+
+<p>Or use the CDN file from here:</p>
+
+<pre><code>https://cdn.rawgit.com/jsguy/marble/master/dist/marble-latest.min.js
+</code></pre>
+
+<h2><a id="user-content-usage" class="anchor" href="#usage" aria-hidden="true"></a>Usage</h2>
+
+<p>These examples will each show a 360 degree image at 100% width, 480px height, or if the script tag is inside a container with a height and/or width set, it will use that.</p>
+
+<h3><a id="user-content-unobtrusively-with-a-preview-image" class="anchor" href="#unobtrusively-with-a-preview-image" aria-hidden="true"></a>Unobtrusively with a preview image</h3>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">img</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>pic-preview.jpg<span class="pl-pds">"</span></span> <span class="pl-e">data-previewimg</span>=<span class="pl-s"><span class="pl-pds">"</span>pic-preview.jpg<span class="pl-pds">"</span></span> <span class="pl-e">data-img</span>=<span class="pl-s"><span class="pl-pds">"</span>pic.jpg<span class="pl-pds">"</span></span>&gt;
+...
+&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>marble-latest.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+
+<h3><a id="user-content-with-a-single-script-tag" class="anchor" href="#with-a-single-script-tag" aria-hidden="true"></a>With a single script tag:</h3>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>marble-latest.min.js<span class="pl-pds">"</span></span> <span class="pl-e">data-img</span>=<span class="pl-s"><span class="pl-pds">"</span>pic.jpg<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+
+<h3><a id="user-content-manually" class="anchor" href="#manually" aria-hidden="true"></a>Manually</h3>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">span</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>target<span class="pl-pds">'</span></span>&gt;&lt;/<span class="pl-ent">span</span>&gt;
+&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>marble-latest.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;
+<span class="pl-s1">&lt;<span class="pl-ent">script</span>&gt;</span>
+<span class="pl-s1">    <span class="pl-smi">marble</span>.<span class="pl-en">init</span>(<span class="pl-c1">document</span>.<span class="pl-c1">getElementById</span>(<span class="pl-s"><span class="pl-pds">'</span>target<span class="pl-pds">'</span></span>), {</span>
+<span class="pl-s1">        img<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>pic.jpg<span class="pl-pds">'</span></span></span>
+<span class="pl-s1">    });</span>
+<span class="pl-s1">&lt;/<span class="pl-ent">script</span>&gt;</span></pre></div>
+
+<h3><a id="user-content-as-a-slideshow" class="anchor" href="#as-a-slideshow" aria-hidden="true"></a>As a slideshow</h3>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>../src/marble.js<span class="pl-pds">"</span></span> <span class="pl-e">data-img</span>=<span class="pl-s"><span class="pl-pds">"</span>pic1.jpg|pic2.jpg|pic3.jpg<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+
+<p>Note: to specify that you want a slideshow, simply include multiple images separated by a vertical bar "|".</p>
+
+<h2><a id="user-content-options" class="anchor" href="#options" aria-hidden="true"></a>Options</h2>
+
+<p>You can specify options using <code>data</code> attributes on the script tag, here is a list of options:</p>
+
+<ul>
+<li><strong>data-img</strong> - URL to the 360° image you want to display</li>
+<li><strong>data-previewimg</strong> - optional URL to a preview image, this will cause the player to lazy load the image when the user clicks</li>
+<li><strong>data-horizontal</strong> - horizontal degrees offset to start displaying the image, eg: 180 means show the "back" of the image initially, default is 0</li>
+<li><strong>data-vertical</strong> - vertical degrees offset to start displaying the image, eg: -20 means "look down by 20 degrees", default is 0</li>
+<li><strong>zoom</strong> - amount to zoom in/out - positive is zoom in, negative is zoom out, default value is 0</li>
+<li><strong>zoommax</strong> - maximum amount of zoom, beyond 50, the image starts to look quite blurry, default is 50</li>
+<li><strong>zoommin</strong> - minimum amount of zoom, the user will see a spherical shape with your 360 image, when the value is below -110 or so, depending on the diemnsions of your image viewport, default is -250</li>
+<li><strong>animatezoom</strong> - animates a zoom from zoommin to 0 on startup, default is false</li>
+<li><strong>data-width</strong> - the width of the image in pixels, default is to use the container width, or the full width, if no width is set</li>
+<li><strong>data-height</strong> - the height of the image in pixels, uses the container height, or 480px if no height is set on the container</li>
+<li><strong>data-spin</strong> - how many degrees to turn per second, when spinning is enabled, default is 3, set to 0 to disable spinning</li>
+<li><strong>data-startspin</strong> - start spinning when the photo loads</li>
+<li><strong>data-animate</strong> - decelerate animation when the photo loads</li>
+<li><strong>data-allowfullscreen</strong> - allow the user to go full-screen - only available if the browser supports fullscreen, default is true</li>
+<li><strong>data-allowuserinteraction</strong> - do we allow the user to interact with the image, default is true</li>
+<li><strong>data-clicktotogglespin</strong> - does clicking stop/start spinning, default is false</li>
+<li><strong>data-behave</strong> - don't render if there is another image 360° animating/spinning, or the user is interacting with another 360° image on the same page: this provides the best UX when there are several images on the page at once, default is true</li>
+<li><strong>data-overlay</strong> - overlay a pixel mask to darken the image slightly - the can help with the visual apperance of some images, and is useful for background images, default is false</li>
+<li><strong>data-menutimeout</strong> - how long till the menu auto-hides after mouseover in ms, default is 3500</li>
+<li><strong>data-fps</strong> - specify how many FPS to use, (1-60), default is 60, this might be useful to limit CPU/GPU usage if you have several spinning 360° images on the page at once</li>
+<li><strong>data-usedeviceorientation</strong> - allow mobile devices to move the image using the accelerometer, default is false mainly due to some phones accelerometer implementation being faulty</li>
+<li><strong>data-slideshowdelay</strong> - time to show each picture in milliseconds, default is 9000</li>
+<li><strong>data-slideshowindex</strong> - what slide to start on (0-indexed), default is 0</li>
+</ul>
+
+<h2><a id="user-content-examples" class="anchor" href="#examples" aria-hidden="true"></a>Examples</h2>
+
+<p>See the <code>examples</code> directory for some examples</p>
+</article>
+
 </body>
 </html>
