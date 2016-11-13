@@ -1,7 +1,7 @@
 {
   "name": "marble",
   "description": "360 degree equirectangular image viewer",
-  "main": "dist/marble-latest.min.js",
+  "main": "dist/marble-latest.js",
   "authors": [
     "jsguy <mikkel@pointful.com>"
   ],
