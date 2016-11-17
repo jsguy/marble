@@ -62,31 +62,32 @@ Note: to specify that you want a slideshow, simply include multiple images separ
 
 ## Options
 
-You can specify options using `data` attributes on the script tag, here is a list of options:
+You can specify options using `data` attributes on the script tag, or passed into the init function, here is a list of options:
 
-* **data-img** - URL to the 360° image you want to display
-* **data-previewimg** - optional URL to a preview image, this will cause the player to lazy load the image when the user clicks
-* **data-horizontal** - horizontal degrees offset to start displaying the image, eg: 180 means show the "back" of the image initially, default is 0
-* **data-vertical** - vertical degrees offset to start displaying the image, eg: -20 means "look down by 20 degrees", default is 0
+* **img** - URL to the 360° image you want to display
+* **previewimg** - optional URL to a preview image, this will cause the player to lazy load the image when the user clicks
+* **forceinit** - initialize even when a preview image is specified, useful for older browsers, default is false
+* **horizontal** - horizontal degrees offset to start displaying the image, eg: 180 means show the "back" of the image initially, default is 0
+* **vertical** - vertical degrees offset to start displaying the image, eg: -20 means "look down by 20 degrees", default is 0
 * **zoom** - amount to zoom in/out - positive is zoom in, negative is zoom out, default value is 0
 * **zoommax** - maximum amount of zoom, beyond 50, the image starts to look quite blurry, default is 50
 * **zoommin** - minimum amount of zoom, the user will see a spherical shape with your 360 image, when the value is below -110 or so, depending on the diemnsions of your image viewport, default is -250
+* **width** - the width of the image in pixels, default is to use the container width, or the full width, if no width is set
+* **height** - the height of the image in pixels, uses the container height, or 480px if no height is set on the container
+* **spin** - how many degrees to turn per second, when spinning is enabled, default is 3, set to 0 to disable spinning
+* **startspin** - start spinning when the photo loads
+* **animate** - decelerate animation when the photo loads
 * **animatezoom** - animates a zoom from zoommin to 0 on startup, default is false
-* **data-width** - the width of the image in pixels, default is to use the container width, or the full width, if no width is set
-* **data-height** - the height of the image in pixels, uses the container height, or 480px if no height is set on the container
-* **data-spin** - how many degrees to turn per second, when spinning is enabled, default is 3, set to 0 to disable spinning
-* **data-startspin** - start spinning when the photo loads
-* **data-animate** - decelerate animation when the photo loads
-* **data-allowfullscreen** - allow the user to go full-screen - only available if the browser supports fullscreen, default is true
-* **data-allowuserinteraction** - do we allow the user to interact with the image, default is true
-* **data-clicktotogglespin** - does clicking stop/start spinning, default is false
-* **data-behave** - don't render if there is another image 360° animating/spinning, or the user is interacting with another 360° image on the same page: this provides the best UX when there are several images on the page at once, default is true
-* **data-overlay** - overlay a pixel mask to darken the image slightly - the can help with the visual apperance of some images, and is useful for background images, default is false
-* **data-menutimeout** - how long till the menu auto-hides after mouseover in ms, default is 3500
-* **data-fps** - specify how many FPS to use, (1-60), default is 60, this might be useful to limit CPU/GPU usage if you have several spinning 360° images on the page at once
-* **data-usedeviceorientation** - allow mobile devices to move the image using the accelerometer, default is false mainly due to some phones accelerometer implementation being faulty
-* **data-slideshowdelay** - time to show each picture in milliseconds, default is 9000
-* **data-slideshowindex** - what slide to start on (0-indexed), default is 0
+* **allowfullscreen** - allow the user to go full-screen - only available if the browser supports fullscreen, default is true
+* **allowuserinteraction** - do we allow the user to interact with the image, default is true
+* **clicktotogglespin** - does clicking stop/start spinning, default is false
+* **behave** - don't render if there is another image 360° animating/spinning, or the user is interacting with another 360° image on the same page: this provides the best UX when there are several images on the page at once, default is true
+* **overlay** - overlay a pixel mask to darken the image slightly - the can help with the visual apperance of some images, and is useful for background images, default is false
+* **menutimeout** - how long till the menu auto-hides after mouseover in ms, default is 3500
+* **fps** - specify how many FPS to use, (1-60), default is 60, this might be useful to limit CPU/GPU usage if you have several spinning 360° images on the page at once
+* **usedeviceorientation** - allow mobile devices to move the image using the accelerometer, default is false mainly due to some phones accelerometer implementation being faulty
+* **slideshowdelay** - time to show each picture in milliseconds, default is 9000
+* **slideshowindex** - what slide to start on (0-indexed), default is 0
 
 
 ## Examples
