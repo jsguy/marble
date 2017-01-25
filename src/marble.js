@@ -26,7 +26,7 @@ var marbleready = "marbleready",
 					if(name.indexOf("-") !== -1) {
 						//	Add camel cased as well
 						result[dashToCamel(name)] = attribs[i].value;
-					} 
+					}
 				}
 			}
 			return result;
@@ -66,8 +66,10 @@ if(!win.marble) {
 			startspin: true,
 			animate: true,
 			animatezoom: false,
+			allowmousewheel: true,
 			allowuserinteraction: true,
 			allowfullscreen: true,
+			allowcrossorigin: true,
 			clicktotogglespin: false,
 			usedeviceorientation: false,
 			behave: true,
@@ -210,6 +212,7 @@ if(!win.marble) {
 			}, false);
 		}
 
+
 		//	Behave ourselves when others are active
 		if(args.behave) {
 			win.marble.pubSub.on('isActive', function(value){
@@ -220,7 +223,7 @@ if(!win.marble) {
 		//	Make sure we have numbers, not strings, and actual booleans
 		ulib.utils.each(args, function(key, value){
 			//	Allow url to override
-			value = typeof urlParams['marble'+key] !== "undefined"? 
+			value = typeof urlParams['marble'+key] !== "undefined"?
 				urlParams['marble'+key]:
 				value;
 
@@ -249,6 +252,9 @@ if(!win.marble) {
 			sphereMaterial = new THREE.MeshBasicMaterial();
 			sphereMesh = new THREE.Mesh(sphere, sphereMaterial);
 			textureLoader = new THREE.TextureLoader();
+			if(args.allowcrossorigin) {
+				textureLoader.setCrossOrigin("");
+			}
 
 			renderer.setSize(args.width, args.height);
 
@@ -312,26 +318,23 @@ if(!win.marble) {
 			});
 
 			//	Listen for size changes, and apply to camera and renderer
-			var prevContainerWidth = args.container.offsetWidth,
-				prevContainerHeight = args.container.offsetHeight,
+			var prevContainerWidth = args.container.parentNode.offsetWidth,
+				prevContainerHeight = args.container.parentNode.offsetHeight,
 				sizeTimer = setInterval(function(){
-					if(args.container.offsetWidth !== prevContainerWidth || 
-						args.container.offsetHeight !== prevContainerHeight) {
-
+					if(args.container.parentNode.offsetWidth !== prevContainerWidth || args.container.parentNode.offsetHeight !== prevContainerHeight) {
 						//	Resize it
-						args.width = args.container.offsetWidth;
-						args.height = args.container.offsetHeight;
+						args.width = args.container.parentNode.offsetWidth;
+						args.height = args.container.parentNode.offsetHeight;
 
 						//	Set new prev. size
-						prevContainerWidth = args.container.offsetWidth;
-						prevContainerHeight = args.container.offsetHeight;
+						prevContainerWidth = args.container.parentNode.offsetWidth;
+						prevContainerHeight = args.container.parentNode.offsetHeight;
 
 						//	Update camera and renderer
 						//	Ref: http://stackoverflow.com/questions/20290402/three-js-resizing-canvas
 						camera.aspect = args.width / args.height;
 						camera.updateProjectionMatrix();
 						renderer.setSize(args.width, args.height);
-
 					}
 				}, 500);
 
@@ -349,7 +352,7 @@ if(!win.marble) {
 
 							//	Resize the container to fill the screen
 							args.container.style.position = "fixed";
-							
+
 							args.container.style.top = "0";
 							args.container.style.left = "0";
 							args.container.style.width = "100%";
@@ -623,7 +626,7 @@ if(!win.marble) {
 					userVertical = args.vertical;
 
 					args.container.style.cursor = prefix({
-						prop: "grabbing", 
+						prop: "grabbing",
 						dashed: true,
 						force: true
 					});
@@ -787,7 +790,9 @@ if(!win.marble) {
 				args.container.removeEventListener("pointerdown", marblePointerDown, false);
 				args.container.removeEventListener("pointermove", marblePointerMove, false);
 				args.container.removeEventListener("pointerup", marblePointerUp, false);
-				args.container.removeEventListener(window.onwheel !== undefined? "wheel": "mousewheel", marbleMouseWheel, false);
+				if(args.allowmousewheel) {
+					args.container.removeEventListener(window.onwheel !== undefined? "wheel": "mousewheel", marbleMouseWheel, false);
+				}
 				args.container.removeEventListener("mouseout", hideMenuOnTimeout, false);
 				args.container.removeEventListener("touchend", hideMenuOnTimeout, false);
 				args.container.removeEventListener("pointermove", hideMenuOnTimeout, false);
@@ -797,8 +802,10 @@ if(!win.marble) {
 				args.container.addEventListener("pointerdown", marblePointerDown, false);
 				args.container.addEventListener("pointermove", marblePointerMove, false);
 				args.container.addEventListener("pointerup", marblePointerUp, false);
-				//	Mouse wheel. TODO: touch gestures for pinch
-				args.container.addEventListener(window.onwheel !== undefined? "wheel": "mousewheel", marbleMouseWheel, false);
+				if(args.allowmousewheel) {
+					//	Mouse wheel. TODO: touch gestures for pinch
+					args.container.addEventListener(window.onwheel !== undefined? "wheel": "mousewheel", marbleMouseWheel, false);
+				}
 				//	Various events to hide the menu on
 				args.container.addEventListener("mouseout", hideMenuOnTimeout, false);
 				args.container.addEventListener("touchend", hideMenuOnTimeout, false);

@@ -78,6 +78,8 @@ You can specify options using `data` attributes on the script tag, or passed int
 * **startspin** - start spinning when the photo loads
 * **animate** - decelerate animation when the photo loads
 * **animatezoom** - animates a zoom from zoommin to 0 on startup, default is false
+* **allowmousewheel** - do we allow the mouse wheel to zoom in/out, default is true
+* **allowcrossorigin** - do we allow the image to be loaded from a different domain, (domain must support [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)), default is true
 * **allowfullscreen** - allow the user to go full-screen - only available if the browser supports fullscreen, default is true
 * **allowuserinteraction** - do we allow the user to interact with the image, default is true
 * **clicktotogglespin** - does clicking stop/start spinning, default is false

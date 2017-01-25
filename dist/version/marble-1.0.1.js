@@ -42996,7 +42996,6 @@ if(!win.marble) {
 			allowmousewheel: true,
 			allowuserinteraction: true,
 			allowfullscreen: true,
-			allowcrossorigin: true,
 			clicktotogglespin: false,
 			usedeviceorientation: false,
 			behave: true,
@@ -43180,9 +43179,7 @@ if(!win.marble) {
 			sphereMaterial = new THREE.MeshBasicMaterial();
 			sphereMesh = new THREE.Mesh(sphere, sphereMaterial);
 			textureLoader = new THREE.TextureLoader();
-			if(args.allowcrossorigin) {
-				textureLoader.setCrossOrigin("");
-			}
+			textureLoader.crossOrigin = '';
 
 			renderer.setSize(args.width, args.height);
 
