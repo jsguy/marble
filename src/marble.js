@@ -117,6 +117,7 @@ if(!win.marble) {
 		frameInterval = 1000/args.fps,
 		frameDelta,
 		otherImageActive = false,
+		marblePreviewImage,
 		ready = function(){},
 		renderReady = function(){},
 
@@ -283,22 +284,28 @@ if(!win.marble) {
 				args.container.appendChild(overlayDiv);
 			}
 
-
 			//	Add all the nodes
 			args.container.appendChild(menuBox);
 			args.container.appendChild(displayBox);
 			args.container.appendChild(renderer.domElement);
 
+			//	Show our image in the background of the spinner
+			if(args.previewimg) {
+				marblePreviewImage = document.createElement('img');
+				marblePreviewImage.setAttribute("src", args.previewimg);
+				marblePreviewImage.setAttribute("class", "marblePreviewImage");
+				marblePreviewImage.setAttribute("style", "position: absolute; width: " + args.width + "px; height: " + args.height + "px; opacity: 0.5");
+				args.container.insertBefore(marblePreviewImage, renderer.domElement);
+			}
 
-			//	Show a loading spinner
-			var showSpinner = function(){
-					var spinner = args.container.getElementsByClassName("marbleSpinner")[0];
-					spinner.style.display = "block";
-				},
-				hideSpinner = function(){
+			//	Hide the loading spinner
+			var hideSpinner = function(){
 					var spinner = args.container.getElementsByClassName("marbleSpinner")[0];
 					if(spinner) {
 						spinner.style.display = "none";
+					}
+					if(marblePreviewImage){
+						marblePreviewImage.parentNode.removeChild(marblePreviewImage);
 					}
 				};
 
