@@ -325,17 +325,33 @@ if(!win.marble) {
 			});
 
 			//	Listen for size changes, and apply to camera and renderer
-			var prevContainerWidth = args.container.parentNode.offsetWidth,
-				prevContainerHeight = args.container.parentNode.offsetHeight,
+			var prevParentWidth = args.container.parentNode.offsetWidth,
+				prevParentHeight = args.container.parentNode.offsetHeight,
+				prevContainerWidth = args.container.offsetWidth,
+				prevContainerHeight = args.container.offsetHeight,
 				sizeTimer = setInterval(function(){
-					if(args.container.parentNode.offsetWidth !== prevContainerWidth || args.container.parentNode.offsetHeight !== prevContainerHeight) {
+					if(args.container.parentNode.offsetWidth !== prevParentWidth || args.container.parentNode.offsetHeight !== prevParentHeight) {
 						//	Resize it
 						args.width = args.container.parentNode.offsetWidth;
 						args.height = args.container.parentNode.offsetHeight;
 
 						//	Set new prev. size
-						prevContainerWidth = args.container.parentNode.offsetWidth;
-						prevContainerHeight = args.container.parentNode.offsetHeight;
+						prevParentWidth = args.container.parentNode.offsetWidth;
+						prevParentHeight = args.container.parentNode.offsetHeight;
+
+						//	Update camera and renderer
+						//	Ref: http://stackoverflow.com/questions/20290402/three-js-resizing-canvas
+						camera.aspect = args.width / args.height;
+						camera.updateProjectionMatrix();
+						renderer.setSize(args.width, args.height);
+					} else if(args.container.offsetWidth !== prevContainerWidth || args.container.offsetHeight !== prevContainerHeight) {
+						//	Resize it
+						args.width = args.container.offsetWidth;
+						args.height = args.container.offsetHeight;
+
+						//	Set new prev. size
+						prevContainerWidth = args.container.offsetWidth;
+						prevContainerHeight = args.container.offsetHeight;
 
 						//	Update camera and renderer
 						//	Ref: http://stackoverflow.com/questions/20290402/three-js-resizing-canvas
