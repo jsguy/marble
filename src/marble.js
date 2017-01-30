@@ -1,3 +1,6 @@
+//	Idea: ability to create a thumbnail from the viewer
+//	Ref: http://stackoverflow.com/questions/26193702/three-js-how-can-i-make-a-2d-snapshot-of-a-scene-as-a-jpg-image
+
 (function(win){
 
 var marbleready = "marbleready",
@@ -82,6 +85,8 @@ if(!win.marble) {
 			width: el.parentNode.offsetWidth,
 			height: el.parentNode.offsetHeight || 480,
 			img: "",	//	TODO: add default img, when img is missing!
+			imgcube: false,
+			imgcubeflip: true,
 			previewimg: "",
 			container: el
 		}, ulib.utils.extend(params, options || {})),
@@ -246,7 +251,9 @@ if(!win.marble) {
 
 		//	Setup three.js rendering
 		var init = function(args){
-			renderer = new THREE.WebGLRenderer();
+			renderer = new THREE.WebGLRenderer({
+				antialias: true
+			});
 			scene = new THREE.Scene();
 			camera = new THREE.PerspectiveCamera(75, args.width/ args.height, 1, 1000);
 			sphere = new THREE.SphereGeometry(100, 100, 40);
@@ -313,16 +320,81 @@ if(!win.marble) {
 			camera.target = new THREE.Vector3(0, 0, 0);
 			sphere.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
 
-			//	Load our image
-			textureLoader.load(args.img, function(tex){
-				sphereMaterial.map = tex;
-				scene.add(sphereMesh);
-				hideSpinner();
+			if(args.imgcube) {
+				//	Load cube mapped images
+				//	ref: view-source:http://math.hws.edu/eck/cs424/notes2013/threejs/cube-map-demo.html
 
-				ready();
-				//	Start rendering
-				render();
-			});
+				//	Get all our textures
+				var loadTextures = function(textureURLs, callback) {
+					var loaded = 0;
+					function loadedOne() {
+					   loaded += 1;
+					   if (callback && loaded == textureURLs.length) {
+					       for (var i = 0; i < textureURLs; i += 1) {
+					           textures[i].needsUpdate = true;
+						   }
+					       callback();
+					   }
+					}
+					var textures = [];
+					for (var i = 0; i < textureURLs.length; i++) {
+					   //var tex = THREE.ImageUtils.loadTexture( textureURLs[i], undefined, loadedOne );
+					   var tex = textureLoader.load(textureURLs[i], loadedOne);
+					   textures.push(tex);
+					}
+					return textures;
+				},
+				myImgCubeImgs = args.img.split("|"),
+				textures,
+				materials = [];
+
+				// Sort the textures in r l u d b f order
+				myImgCubeImgs.sort(function(a,b){
+					var order = {'r': 6, 'l': 5, 'u': 4, 'd': 3, 'b': 2, 'f': 1},
+						scoreA = order[a[a.lastIndexOf("_")+1]] || 0,
+						scoreB = order[b[b.lastIndexOf("_")+1]] || 0;
+					return scoreB - scoreA;
+				});
+
+				textures = loadTextures(myImgCubeImgs, function(tex){
+					hideSpinner();
+					ready();
+					render();
+				});
+
+				for (var i = 0; i < 6; i += 1) {
+					if(args.imgcubeflip) {
+						//	Flip the texture horizontally, as we're viewing it inside out
+						//	Except for the down texture as it needs to be vertially flipped
+						if(i === 2 || i === 3) {
+							textures[i].flipY = false;
+						} else {
+							//	Ref: http://stackoverflow.com/a/23684251/6637365
+							textures[i].repeat.set(-1, 1);
+							textures[i].offset.set( 1, 0);
+						}
+					}
+					materials.push( new THREE.MeshBasicMaterial( {
+					   color: "white",
+					   side: THREE.BackSide,
+					   map: textures[i]
+					}));
+				}
+
+				sphereMesh = new THREE.Mesh( new THREE.CubeGeometry(100,100,100), new THREE.MultiMaterial(materials) );
+				scene.add(sphereMesh);
+		   	} else {
+				//	Load our image
+				textureLoader.load(args.img, function(tex){
+					sphereMaterial.map = tex;
+					scene.add(sphereMesh);
+					hideSpinner();
+
+					ready();
+					//	Start rendering
+					render();
+				});
+			}
 
 			//	Listen for size changes, and apply to camera and renderer
 			var prevParentWidth = args.container.parentNode.offsetWidth,
@@ -885,7 +957,7 @@ if(!win.marble) {
 		};
 
 		//	Grab images for slideshow, if more than one image
-		if(args.img && args.img.indexOf("|") !== -1) {
+		if(!args.imgcube && args.img && args.img.indexOf("|") !== -1) {
 			args.slideShowImages = args.slideShowImages || [];
 			args.slideShowImages = args.slideShowImages.concat(args.img.split("|"));
 			args.img = args.slideShowImages[0];

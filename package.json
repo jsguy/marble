@@ -27,6 +27,6 @@
   },
   "homepage": "https://github.com/jsguy/marble#readme",
   "dependencies": {
-    "three": "0.74.0"
+    "three": "0.84.0"
   }
 }

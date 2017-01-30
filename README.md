@@ -64,7 +64,9 @@ Note: to specify that you want a slideshow, simply include multiple images separ
 
 You can specify options using `data` attributes on the script tag, or passed into the init function, here is a list of options:
 
-* **img** - URL to the 360° image you want to display
+* **img** - URL to the 360° image(s) you want to display
+* **imgcube** - Is this an image cube from 6 images, default is false, see the [Cube naming convention] below
+* **imgcubeflip** - When using an imgcube, horizontally flip U,L,R,F,B, vertically flip D, default is true
 * **previewimg** - optional URL to a preview image, this will cause the player to lazy load the image when the user clicks
 * **forceinit** - initialize even when a preview image is specified, useful for older browsers, default is false
 * **horizontal** - horizontal degrees offset to start displaying the image, eg: 180 means show the "back" of the image initially, default is 0
@@ -91,6 +93,20 @@ You can specify options using `data` attributes on the script tag, or passed int
 * **slideshowdelay** - time to show each picture in milliseconds, default is 9000
 * **slideshowindex** - what slide to start on (0-indexed), default is 0
 
+## Cube naming convention
+
+The 6 images to be used in a cube must be named with an underscore, ("\_"), followed by one of the following letters at the end of the file name:
+
+* **r** - right face of cube
+* **l** - left face of cube
+* **u** - up face of cube
+* **d** - down face of cube
+* **b** - back face of cube
+* **f** - front face of cube
+
+So for example you might name the images: cube_r.jpg, cube_l.jpg, etc...
+
+Note: if your images do not follow this convention, make sure they are specified in the order:
 
 ## Examples
 
