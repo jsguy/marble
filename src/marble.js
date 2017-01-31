@@ -86,7 +86,7 @@ if(!win.marble) {
 			height: el.parentNode.offsetHeight || 480,
 			img: "",	//	TODO: add default img, when img is missing!
 			imgcube: false,
-			imgcubeflip: true,
+			imgcubekrmode: false,
 			previewimg: "",
 			container: el
 		}, ulib.utils.extend(params, options || {})),
@@ -206,6 +206,9 @@ if(!win.marble) {
 			return false;
 		}
 
+		//	Set default cube order depending on cube kr mode
+		args.imgcubeorder = args.imgcubeorder || (args.imgcubekrmode? "r,l,u,d,b,f":  "r,l,u,d,f,b");
+
 		//	Add device orientation support
 		if(args.usedeviceorientation && window.DeviceOrientationEvent) {
 			window.addEventListener('deviceorientation', function(e){
@@ -323,7 +326,6 @@ if(!win.marble) {
 			if(args.imgcube) {
 				//	Load cube mapped images
 				//	ref: view-source:http://math.hws.edu/eck/cs424/notes2013/threejs/cube-map-demo.html
-
 				//	Get all our textures
 				var loadTextures = function(textureURLs, callback) {
 					var loaded = 0;
@@ -346,13 +348,17 @@ if(!win.marble) {
 				},
 				myImgCubeImgs = args.img.split("|"),
 				textures,
-				materials = [];
+				materials = [],
+				cubeorder = args.imgcubeorder.split(",").reduce(function(acc, cur, i) {
+					acc[cur] = 6-i;
+					return acc;
+				}, {});
 
 				// Sort the textures in r l u d b f order
 				myImgCubeImgs.sort(function(a,b){
-					var order = {'r': 6, 'l': 5, 'u': 4, 'd': 3, 'b': 2, 'f': 1},
-						scoreA = order[a[a.lastIndexOf("_")+1]] || 0,
-						scoreB = order[b[b.lastIndexOf("_")+1]] || 0;
+					//var order = {'r': 6, 'l': 5, 'u': 4, 'd': 3, 'b': 2, 'f': 1},
+					var scoreA = cubeorder[a[a.lastIndexOf("_")+1]] || 0,
+						scoreB = cubeorder[b[b.lastIndexOf("_")+1]] || 0;
 					return scoreB - scoreA;
 				});
 
@@ -363,7 +369,7 @@ if(!win.marble) {
 				});
 
 				for (var i = 0; i < 6; i += 1) {
-					if(args.imgcubeflip) {
+					if(args.imgcubekrmode) {
 						//	Flip the texture horizontally, as we're viewing it inside out
 						//	Except for the down texture as it needs to be vertially flipped
 						if(i === 2 || i === 3) {
