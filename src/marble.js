@@ -72,8 +72,8 @@ if(!win.marble) {
 			allowmousewheel: true,
 			allowuserinteraction: true,
 			allowfullscreen: true,
-			showsavepicbutton: false,
-			savepicpassthrough: false,
+			showsavefilebutton: false,
+			savefilepassthrough: false,
 			allowcrossorigin: true,
 			clicktotogglespin: false,
 			usedeviceorientation: false,
@@ -610,7 +610,7 @@ if(!win.marble) {
 				}
 			});
 
-			if(args.showsavepicbutton) {
+			if(args.showsavefilebutton) {
 				menuButtons.push({
 					name: "Picture",
 					title: "Save picture",
@@ -621,7 +621,7 @@ if(!win.marble) {
 
 							win.marble.pubSub.trigger('saveFile', strData, filename);
 
-							if(!args.savepicpassthrough) {
+							if(!args.savefilepassthrough) {
 								//	Ref: http://stackoverflow.com/a/26197858/6637365
 								var link = document.createElement('a');
 								if (typeof link.download === 'string') {

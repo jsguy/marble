@@ -84,8 +84,8 @@ You can specify options using `data` attributes on the script tag, or passed int
 * **allowmousewheel** - do we allow the mouse wheel to zoom in/out, default is true
 * **allowcrossorigin** - do we allow the image to be loaded from a different domain, (domain must support [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)), default is true
 * **allowfullscreen** - allow the user to go full-screen - only available if the browser supports fullscreen, default is true
-* **showsavepicbutton** - Do we show a button that allows the user to save an image from the current view, default is false
-* **savepicpassthrough** - If the save pic button is shown, do we simply allow the use to subscribe to the "saveFile" event, rather than having the browser handle it, default is false
+* **showsavefilebutton** - Do we show a button that allows the user to save an image from the current view, default is false
+* **savefilepassthrough** - If the save pic button is shown, do we simply allow the use to subscribe to the "saveFile" event, rather than having the browser handle it, default is false
 * **allowuserinteraction** - do we allow the user to interact with the image, default is true
 * **clicktotogglespin** - does clicking stop/start spinning, default is false
 * **behave** - don't render if there is another image 360° animating/spinning, or the user is interacting with another 360° image on the same page: this provides the best UX when there are several images on the page at once, default is true
