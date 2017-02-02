@@ -3,7 +3,7 @@ module.exports = function(grunt) {
 	//	Concatenation file order
 	var concatFiles = [
 		'src/marble_header.js',
-		'node_modules/three/three.js',
+		'node_modules/three/build/three.js',
 		'node_modules/ulib/src/ulib.pubsub.js',
 		'node_modules/ulib/src/ulib.utils.js',
 		'node_modules/ulib/src/ulib.url.js',
@@ -22,7 +22,7 @@ module.exports = function(grunt) {
 			testbuild: {
 				options: {
 					separator: ';',
-					//  We'd prefer to fail on missing files, but at least this will 
+					//  We'd prefer to fail on missing files, but at least this will
 					//	supposedly warn: https://github.com/gruntjs/grunt-contrib-concat/issues/15
 					nonull: true
 				},

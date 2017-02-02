@@ -402,20 +402,24 @@ if(!win.marble) {
 				});
 			}
 
+			var getpn = function(node){
+				return (node && node.parentNode)? node.parentNode: {};
+			};
+
 			//	Listen for size changes, and apply to camera and renderer
-			var prevParentWidth = args.container.parentNode.offsetWidth,
-				prevParentHeight = args.container.parentNode.offsetHeight,
+			var prevParentWidth = getpn(args.container).offsetWidth,
+				prevParentHeight = getpn(args.container).offsetHeight,
 				prevContainerWidth = args.container.offsetWidth,
 				prevContainerHeight = args.container.offsetHeight,
 				sizeTimer = setInterval(function(){
-					if(args.container.parentNode.offsetWidth !== prevParentWidth || args.container.parentNode.offsetHeight !== prevParentHeight) {
+					if(getpn(args.container).offsetWidth !== prevParentWidth || getpn(args.container).offsetHeight !== prevParentHeight) {
 						//	Resize it
-						args.width = args.container.parentNode.offsetWidth;
-						args.height = args.container.parentNode.offsetHeight;
+						args.width = getpn(args.container).offsetWidth;
+						args.height = getpn(args.container).offsetHeight;
 
 						//	Set new prev. size
-						prevParentWidth = args.container.parentNode.offsetWidth;
-						prevParentHeight = args.container.parentNode.offsetHeight;
+						prevParentWidth = getpn(args.container).offsetWidth;
+						prevParentHeight = getpn(args.container).offsetHeight;
 
 						//	Update camera and renderer
 						//	Ref: http://stackoverflow.com/questions/20290402/three-js-resizing-canvas
@@ -447,8 +451,10 @@ if(!win.marble) {
 					if(clickedExpand) {
 						//	We are now full screen
 						if(screenfull.isFullscreen) {
-							prevStyle.width = args.width;
-							prevStyle.height = args.height;
+							prevStyle.top = args.container.style.top;
+							prevStyle.left = args.container.style.left;
+							prevStyle.width = args.container.style.width;
+							prevStyle.height = args.container.style.height;
 							prevStyle.position = args.container.style.position;
 
 							//	Resize the container to fill the screen
@@ -468,6 +474,8 @@ if(!win.marble) {
 
 							//	Set the container back to normal
 							args.container.style.position = prevStyle.position;
+							args.container.style.top = prevStyle.top;
+							args.container.style.left = prevStyle.left;
 							args.container.style.width = prevStyle.width;
 							args.container.style.height = prevStyle.height;
 
