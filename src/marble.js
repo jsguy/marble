@@ -231,6 +231,11 @@ if(!win.marble) {
 			});
 		}
 
+		//	When args are requested
+		win.marble.pubSub.on('getArgs', function(value){
+			win.marble.pubSub.trigger('args', args);
+		});
+
 		//	Make sure we have numbers, not strings, and actual booleans
 		ulib.utils.each(args, function(key, value){
 			//	Allow url to override

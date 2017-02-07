@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <head>
 	<style type="text/css">body { margin: 0; }</style>
+	<script src="./lib/jquery-3.1.1.js"></script>
 	<script src="../node_modules/three/build/three.js"></script>
 	<script src="../src/detector.js"></script>
 	<script src="../node_modules/ulib/src/ulib.utils.js"></script>
@@ -27,6 +28,7 @@
 		<div class="image-surround">
 			<script
 				src="../src/marble.js"
+				data-id="myMarble"
 				data-img="../pics/chateau_polin.jpg"
 				data-previewimg="../pics/chateau_polin_thumb.jpg"
 				data-showsavefilebutton="true"
@@ -41,19 +43,53 @@
 			</script>
 		</div>
         <h2>Click the "Save button" in the above 360 photo to take a screenshot</h2>
+        <div id="linkTarget"></div>
+        <div id="imgArgs"></div>
         <div id="imgTarget"></div>
         <p>Note: you could save the image with an ajax POST, however we're just showing it here for demo purposes.</p>
 	</div>
 
 	<script>
+		//	Subscribe to get the arguments of the player
+		var myArgs;
+		marble.pubSub.on('args', function(args){
+			if(args.id === "myMarble") {
+				myArgs = args;
+			}
+		});
+
 		marble.pubSub.on('saveFile', function(data, fileName){
-            //  You could POST the image data with AJAX here, though for this demo,
-            //  we will just add it to the DOM...
+
+			//	Get the args and show
+			marble.pubSub.trigger('getArgs');
+
+			$('#imgArgs').html("<code><pre>" + JSON.stringify({
+				"h": Math.round(myArgs.horizontal),
+				"v": Math.round(myArgs.vertical),
+				"z": Math.round(myArgs.zoom) 
+			}) + "</pre></code>");
+
+			//	Add the image to the DOM
 			var img = document.createElement("IMG");
 			img.src = data;
             var target = document.getElementById('imgTarget');
             target.innerHTML = "";
             target.appendChild(img); 
+
+			//	And post it to the server
+			$.ajax({
+				type: "POST",
+				url: "save.php",
+				data: { data: data.split('data:image/octet-stream;base64').join('') },
+				contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+				success: function(link){
+					$('#linkTarget').html("<a target='_blank' href='" + link + "'>Link to saved image</a>");
+				},
+				error: function(err){
+					console.log('Error', err);
+				}
+			});
+
 		});
 	</script>
 
