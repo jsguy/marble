@@ -311,7 +311,7 @@ if(!win.marble) {
 			if(args.previewimg) {
 				marblePreviewImage = document.createElement('img');
 				marblePreviewImage.setAttribute("src", args.previewimg);
-				marblePreviewImage.setAttribute("class", "marblePreviewImage");
+				marblePreviewImage.className = "marble-preview-image";
 				marblePreviewImage.setAttribute("style", "position: absolute; width: " + args.width + "px; height: " + args.height + "px; opacity: 0.5");
 				args.container.insertBefore(marblePreviewImage, renderer.domElement);
 			}
@@ -1054,6 +1054,7 @@ if(!win.marble) {
 
 				previewImg.setAttribute("src", args.previewimg);
 				previewImg.setAttribute("style", "position: absolute");
+				previewImg.className = "marble-preview-image";
 				args.container.appendChild(previewImg);
 
 				// Hack: make sure the style sheet works in older WebKits

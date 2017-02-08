@@ -45887,6 +45887,11 @@ if(!win.marble) {
 			});
 		}
 
+		//	When args are requested
+		win.marble.pubSub.on('getArgs', function(value){
+			win.marble.pubSub.trigger('args', args);
+		});
+
 		//	Make sure we have numbers, not strings, and actual booleans
 		ulib.utils.each(args, function(key, value){
 			//	Allow url to override
@@ -45962,7 +45967,7 @@ if(!win.marble) {
 			if(args.previewimg) {
 				marblePreviewImage = document.createElement('img');
 				marblePreviewImage.setAttribute("src", args.previewimg);
-				marblePreviewImage.setAttribute("class", "marblePreviewImage");
+				marblePreviewImage.className = "marble-preview-image";
 				marblePreviewImage.setAttribute("style", "position: absolute; width: " + args.width + "px; height: " + args.height + "px; opacity: 0.5");
 				args.container.insertBefore(marblePreviewImage, renderer.domElement);
 			}
@@ -46705,6 +46710,7 @@ if(!win.marble) {
 
 				previewImg.setAttribute("src", args.previewimg);
 				previewImg.setAttribute("style", "position: absolute");
+				previewImg.className = "marble-preview-image";
 				args.container.appendChild(previewImg);
 
 				// Hack: make sure the style sheet works in older WebKits
