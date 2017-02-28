@@ -102,6 +102,7 @@ if(!win.marble) {
 		scene,
 		camera,
 		sphere,
+		materials = [],
 		sphereMaterial,
 		sphereMesh,
 		textureLoader,
@@ -133,8 +134,57 @@ if(!win.marble) {
 		deviceOrientation,
 		doLast = {alpha: null, beta: null, gamma: null},
 		doDiff = {alpha: 0, beta: 0, gamma: 0},
+
+		canRender = true,
+
+		sizeTimer,
+		slideShowTimer,
+		hideMenuTimer,
+
+		forceRender = function(){
+			canRender = true;
+			otherImageActive = false;
+			render();
+		},
+
+		dispose = function(){
+			canRender = false;
+
+			clearInterval(sizeTimer);
+			clearInterval(slideShowTimer);
+			clearTimeout(hideMenuTimer);
+
+			scene.remove( sphereMesh );
+
+			if(sphereMaterial && sphereMaterial.map && sphereMaterial.map.dispose) {
+				sphereMaterial.map.dispose();
+			}
+			sphereMaterial.dispose();
+
+			for(var m = 0; m < materials.length; m += 1) {
+				if(materials[m] && materials[m].map){
+					materials[m].map.dispose();
+				}
+				materials[m].dispose();
+			}
+
+			var domParent = renderer.domElement.parentElement;
+			domParent.classList.remove('marble');
+			domParent.removeChild( renderer.domElement );
+
+			renderer.forceContextLoss();
+			renderer.context = null;
+			renderer.domElement = null;
+
+			renderer.dispose();
+			renderer = null;
+		},
+
 		//	Main render method
 		render = function(){
+			if(!canRender) {
+				return false;
+			}
 			//	See if anyone else if already rendering
 			if(args.behave){
 				if(!otherImageActive) {
@@ -356,7 +406,6 @@ if(!win.marble) {
 				},
 				myImgCubeImgs = args.img.split("|"),
 				textures,
-				materials = [],
 				cubeorder = args.imgcubeorder.split(",").reduce(function(acc, cur, i) {
 					acc[cur] = 6-i;
 					return acc;
@@ -418,38 +467,38 @@ if(!win.marble) {
 			var prevParentWidth = getpn(args.container).offsetWidth,
 				prevParentHeight = getpn(args.container).offsetHeight,
 				prevContainerWidth = args.container.offsetWidth,
-				prevContainerHeight = args.container.offsetHeight,
-				sizeTimer = setInterval(function(){
-					if(getpn(args.container).offsetWidth !== prevParentWidth || getpn(args.container).offsetHeight !== prevParentHeight) {
-						//	Resize it
-						args.width = getpn(args.container).offsetWidth;
-						args.height = getpn(args.container).offsetHeight;
+				prevContainerHeight = args.container.offsetHeight;
+			sizeTimer = setInterval(function(){
+				if(getpn(args.container).offsetWidth !== prevParentWidth || getpn(args.container).offsetHeight !== prevParentHeight) {
+					//	Resize it
+					args.width = getpn(args.container).offsetWidth;
+					args.height = getpn(args.container).offsetHeight;
 
-						//	Set new prev. size
-						prevParentWidth = getpn(args.container).offsetWidth;
-						prevParentHeight = getpn(args.container).offsetHeight;
+					//	Set new prev. size
+					prevParentWidth = getpn(args.container).offsetWidth;
+					prevParentHeight = getpn(args.container).offsetHeight;
 
-						//	Update camera and renderer
-						//	Ref: http://stackoverflow.com/questions/20290402/three-js-resizing-canvas
-						camera.aspect = args.width / args.height;
-						camera.updateProjectionMatrix();
-						renderer.setSize(args.width, args.height);
-					} else if(args.container.offsetWidth !== prevContainerWidth || args.container.offsetHeight !== prevContainerHeight) {
-						//	Resize it
-						args.width = args.container.offsetWidth;
-						args.height = args.container.offsetHeight;
+					//	Update camera and renderer
+					//	Ref: http://stackoverflow.com/questions/20290402/three-js-resizing-canvas
+					camera.aspect = args.width / args.height;
+					camera.updateProjectionMatrix();
+					renderer.setSize(args.width, args.height);
+				} else if(args.container.offsetWidth !== prevContainerWidth || args.container.offsetHeight !== prevContainerHeight) {
+					//	Resize it
+					args.width = args.container.offsetWidth;
+					args.height = args.container.offsetHeight;
 
-						//	Set new prev. size
-						prevContainerWidth = args.container.offsetWidth;
-						prevContainerHeight = args.container.offsetHeight;
+					//	Set new prev. size
+					prevContainerWidth = args.container.offsetWidth;
+					prevContainerHeight = args.container.offsetHeight;
 
-						//	Update camera and renderer
-						//	Ref: http://stackoverflow.com/questions/20290402/three-js-resizing-canvas
-						camera.aspect = args.width / args.height;
-						camera.updateProjectionMatrix();
-						renderer.setSize(args.width, args.height);
-					}
-				}, 500);
+					//	Update camera and renderer
+					//	Ref: http://stackoverflow.com/questions/20290402/three-js-resizing-canvas
+					camera.aspect = args.width / args.height;
+					camera.updateProjectionMatrix();
+					renderer.setSize(args.width, args.height);
+				}
+			}, 500);
 
 			//	Check when fullscreen can be enabled
 			if (screenfull.enabled) {
@@ -643,7 +692,7 @@ if(!win.marble) {
 						imgMime = "image/jpeg",
 						downloadMime = "image/octet-stream",
 						imgData = renderer.domElement.toDataURL(imgMime);
-						
+
 						saveFile(imgData.replace(imgMime, downloadMime), "marblescreenshot.jpg");
 
 						e.preventDefault();
@@ -922,7 +971,6 @@ if(!win.marble) {
 						requestAnimationFrame(decFunc);
 					}
 				},
-				hideMenuTimer,
 				hideMenuOnTimeout = function(){
 					if(isPaused && isMenuShown) {
 						clearTimeout(hideMenuTimer);
@@ -1001,7 +1049,7 @@ if(!win.marble) {
 
 			//	Basic slideshow
 			if(args.slideShowImages && args.slideShowImages.length) {
-				setInterval(function() {
+				slideShowTimer = setInterval(function() {
 					if(args.slideshowpaused) {
 						return;
 					}
@@ -1087,7 +1135,9 @@ if(!win.marble) {
 		//	Expose args
 		//	TODO: add methods for manipulating this instance
 		args.container.marble = {
-			args: args
+			args: args,
+			forceRender: forceRender,
+			dispose: dispose
 		};
 	};
 }
