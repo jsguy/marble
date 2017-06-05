@@ -168,16 +168,18 @@ if(!win.marble) {
 				materials[m].dispose();
 			}
 
-			var domParent = renderer.domElement.parentElement;
-			domParent.classList.remove('marble');
-			domParent.removeChild( renderer.domElement );
+			if(renderer){
+				var domParent = renderer.domElement.parentElement;
+				domParent.classList.remove('marble');
+				domParent.removeChild( renderer.domElement );
 
-			renderer.forceContextLoss();
-			renderer.context = null;
-			renderer.domElement = null;
+				renderer.forceContextLoss();
+				renderer.context = null;
+				renderer.domElement = null;
 
-			renderer.dispose();
-			renderer = null;
+				renderer.dispose();
+				renderer = null;
+			}
 		},
 
 		//	Main render method
