@@ -45940,8 +45940,16 @@ if(!win.marble) {
 		}
 
 		//	When args are requested
-		win.marble.pubSub.on('getArgs', function(value){
+		win.marble.pubSub.on('getArgs', function(){
 			win.marble.pubSub.trigger('args', args);
+		});
+
+		//	When args are being set
+		win.marble.pubSub.on('setArgs', function(obj){
+			obj = obj || {};
+			for(var i in obj){if(obj.hasOwnProperty(i) && args.hasOwnProperty(i)){
+				args[i] = obj[i];
+			}}
 		});
 
 		//	Make sure we have numbers, not strings, and actual booleans
