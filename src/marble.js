@@ -207,34 +207,34 @@ if(!win.marble) {
 			frameNow = Date.now();
 			frameDelta = frameNow - frameThen;
 
-		    if(args.usedeviceorientation && deviceOrientation) {
-				//	Find the differences
-				for(var i in doLast) if(doLast.hasOwnProperty(i)){{
-					if(doLast[i] === null) {
-						doDiff[i] = 0;
-					} else {
-						doDiff[i] = deviceOrientation[i] - doLast[i];
-					}
-					doLast[i] = deviceOrientation[i];
-				}}
-
-				if(doDiff.alpha) {
-					args.horizontal -= doDiff.alpha;
-				}
-				if(orientation === 0) {
-					if(doDiff.beta) {
-						args.vertical += doDiff.beta;
-					}
-				} else {
-					if(doDiff.gamma) {
-						args.vertical += doDiff.gamma * (orientation * -1/90);
-					}
-				}
-		    }
-
 			//	See if we're ready to render
 			if (frameDelta > frameInterval) {
 				frameThen = frameNow - (frameDelta % frameInterval);
+
+				if(args.usedeviceorientation && deviceOrientation) {
+					//	Find the differences
+					for(var i in doLast) if(doLast.hasOwnProperty(i)){{
+						if(doLast[i] === null) {
+							doDiff[i] = 0;
+						} else {
+							doDiff[i] = deviceOrientation[i] - doLast[i];
+						}
+						doLast[i] = deviceOrientation[i];
+					}}
+
+					if(doDiff.alpha) {
+						args.horizontal -= doDiff.alpha;
+					}
+					if(orientation === 0) {
+						if(doDiff.beta) {
+							args.vertical += doDiff.beta;
+						}
+					} else {
+						if(doDiff.gamma) {
+							args.vertical += doDiff.gamma * (orientation * -1/90);
+						}
+					}
+				}
 
 				//	If we want to keep spinning
 				if(!useroverride && args.startspin && !!args.spin){
