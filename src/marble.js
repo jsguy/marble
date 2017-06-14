@@ -824,6 +824,8 @@ if(!win.marble) {
 						return;
 					}
 
+					win.marble.pubSub.trigger('isInteracting', args);
+
 					//	Start rendering if another image was active
 					if(otherImageActive) {
 						win.marble.pubSub.trigger('isActive', true);
