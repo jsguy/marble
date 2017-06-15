@@ -859,6 +859,7 @@ if(!win.marble) {
 				},
 				//	Move with mouse/finger
 				marblePointerMove = function(e){
+					var moveMultiplier = 0.25;
 					showMenu();
 					if(e && e.target && e.target.tagName !== "CANVAS") {
 						return;
@@ -868,8 +869,8 @@ if(!win.marble) {
 					}
 					movedMouse = true;
 					if(useroverride){
-						args.horizontal = (userX - e.x) * 0.1 + userHorizontal;
-						args.vertical = (e.y - userY) * 0.1 + userVertical;
+						args.horizontal = (userX - e.x) * moveMultiplier + userHorizontal;
+						args.vertical = (e.y - userY) * moveMultiplier + userVertical;
 					}
 					diffX = prevX - e.x;
 					diffY = prevY - e.y;
@@ -951,9 +952,9 @@ if(!win.marble) {
 					}
 
 					//	Deceleration calculation always runs at 60fps
-					var frames = 120,
+					var frames = 180,
 						count = 0,
-						decelerateMultiplier = 0.08,
+						decelerateMultiplier = 0.1,
 						tweeny = function(count){
 							var tween = 1-easeOutCubic(count/frames);
 							return {
