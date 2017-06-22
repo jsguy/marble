@@ -2,6 +2,9 @@
 <head>
 	<style type="text/css">body { margin: 0; }</style>
 	<script src="../node_modules/three/build/three.js"></script>
+	<script src="../src/three.stereo-effect.js"></script>
+	<script src="../src/three.orbitcontrols.js"></script>
+	<script src="../src/three.deviceorientationcontrols.js"></script>
 	<script src="../src/detector.js"></script>
 	<script src="../node_modules/ulib/src/ulib.utils.js"></script>
 	<script src="../node_modules/ulib/src/ulib.pubsub.js"></script>
@@ -29,12 +32,13 @@
 				src="../src/marble.js"
 				data-img="../pics/chateau_polin.jpg"
 				data-previewimg="../pics/chateau_polin_thumb.jpg"
+				data-allowuserinteraction="false"
 				data-forceinit="true"
 				data-horizontal="280"
 				data-vertical="-30"
 				data-width="800"
 				data-height="400"
-				data-startspin="false"
+				data-startspin="true"
 				data-animate="true">
 			</script>
 		</div>

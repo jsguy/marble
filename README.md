@@ -83,6 +83,8 @@ You can specify options using `data` attributes on the script tag, or passed int
 * **animatezoom** - animates a zoom from zoommin to 0 on startup, default is false
 * **allowmousewheel** - do we allow the mouse wheel to zoom in/out, default is true
 * **allowcrossorigin** - do we allow the image to be loaded from a different domain, (domain must support [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)), default is true
+* **addcdnparameter** - add a cdn parameter to the URL of the image request, useful for when CORS headers are being ignored, due to CDN prefretch caching, default is false
+* **cdnparameter** - the cdn parameter to (optionally) add, (the value of the key is set to the hash of the image URL), default is "cdnkey"
 * **allowfullscreen** - allow the user to go full-screen - only available if the browser supports fullscreen, default is true
 * **showspinbutton** - Do we show a button that allows the user to start/pause the spin of the image, default is true
 * **showsavefilebutton** - Do we show a button that allows the user to save an image from the current view, default is false
