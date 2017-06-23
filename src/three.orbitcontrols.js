@@ -1,4 +1,7 @@
 // NOTE: This is a modified version of this GIST: https://gist.github.com/mrflix/8351020
+//	It includes modifications mentioned in: https://stackoverflow.com/a/35448946/6637365
+//	And also the ability to not use inverted controls, plus some deceleration for mouse/touch events
+//	Also linear movement of the dolly system
 
 /**
  * @author qiao / https://github.com/qiao
@@ -7,6 +10,7 @@
  * @author WestLangley / http://github.com/WestLangley
  * @author erich666 / http://erichaines.com
  * @author mrflix / http://felixniklas.de
+ * @author jsguy https://github.com/jsguy
  * 
  * released under MIT License (MIT)
  */
@@ -31,6 +35,9 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 	this.object = object;
 	this.domElement = ( domElement !== undefined ) ? domElement : document;
 	this.localElement = ( localElement !== undefined ) ? localElement : document;
+
+	//	Set for quaternion device orientation
+	this.object.rotation.reorder( "YXZ" );
 
 	// API
 
@@ -72,6 +79,8 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 	this.noKeys = false;
 	// The four arrow keys
 	this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
+
+	this.useDeviceOrientation = true;
 
 	// Set to true to invert the direction the controls spin the viewpoint
 	this.invertControls = false;
@@ -119,10 +128,29 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 
 	// events
 
+	var isOrbitEvent = false;
+	var hasMovedOrientationControls = false;
+	var lastBeta = 0;
+	var lastGamma = 0;
+
 	var changeEvent = { type: 'change' };
 
+	var radiusStep = 4;
 
-	this.rotateLeft = function ( angle, movement ) {
+	var moveDollyIn = function(){
+		radius -= radiusStep;
+		radius = radius < minRadius? minRadius: radius;
+	};
+	var moveDollyOut = function(){
+		radius += radiusStep;
+		radius = radius > maxRadius? maxRadius: radius;
+	};
+
+	this.deviceOrientation = {};
+
+	this.rotateLeft = function ( angle, movement, invert ) {
+
+		invert = typeof invert !== "undefined"? invert: scope.invertControls;
 
 		if ( angle === undefined ) {
 
@@ -135,11 +163,13 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 			prevLeft = movement.x;
 		}
 
-		thetaDelta += scope.invertControls? -angle: angle;
+		thetaDelta += invert? -angle: angle;
 
 	};
 
-	this.rotateUp = function ( angle, movement ) {
+	this.rotateUp = function ( angle, movement, invert ) {
+
+		invert = typeof invert !== "undefined"? invert: scope.invertControls;
 
 		if ( angle === undefined ) {
 
@@ -152,7 +182,7 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 			prevUp = movement.y;
 		}
 
-		phiDelta += scope.invertControls? -angle: angle;
+		phiDelta += invert? -angle: angle;
 
 	};
 
@@ -215,16 +245,6 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 
 	};
 
-	var radiusStep = 4,
-		moveDollyIn = function(){
-			radius -= radiusStep;
-			radius = radius < minRadius? minRadius: radius;
-		},
-		moveDollyOut = function(){
-			radius += radiusStep;
-			radius = radius > maxRadius? maxRadius: radius;
-		};
-
 	this.dollyIn = function () {
 		if(scope.invertControls) {
 			moveDollyIn();
@@ -242,6 +262,25 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 	};
 
 	this.update = function () {
+
+		//	See if we're using the device orientation
+		if(!isOrbitEvent && scope.useDeviceOrientation && hasMovedOrientationControls) {
+			var alpha = scope.deviceOrientation.alpha ? THREE.Math.degToRad(scope.deviceOrientation.alpha) : 0; // Z
+			var beta = scope.deviceOrientation.beta ? THREE.Math.degToRad(scope.deviceOrientation.beta) : 0; // X'
+			var gamma = scope.deviceOrientation.gamma ? THREE.Math.degToRad(scope.deviceOrientation.gamma) : 0; // Y''
+			var orient = scope.screenOrientation ? THREE.Math.degToRad(scope.screenOrientation) : 0; // O
+
+			var currentQ = new THREE.Quaternion().copy(scope.object.quaternion);
+
+			setObjectQuaternion(currentQ, alpha, beta, gamma, orient);
+			var currentAngle = Quat2Angle(currentQ.x, currentQ.y, currentQ.z, currentQ.w);
+			var radDeg = 180 / Math.PI;
+
+			this.rotateLeft(lastGamma - currentAngle.z, null, true); 
+			lastGamma = currentAngle.z;
+			this.rotateUp(lastBeta - currentAngle.y, null, true);
+			lastBeta = currentAngle.y;
+		}
 
 		var position = this.object.position;
 		var offset = position.clone().sub( this.target );
@@ -288,6 +327,58 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 		}
 	};
 
+
+	var setObjectQuaternion = function () {
+		var zee = new THREE.Vector3( 0, 0, 1 );
+		var euler = new THREE.Euler();
+		var q0 = new THREE.Quaternion();
+		var q1 = new THREE.Quaternion(  - Math.sqrt( 0.5 ), 0, 0,  Math.sqrt( 0.5 ) ); // - PI/2 around the x-axis
+
+		return function ( quaternion, alpha, beta, gamma, orient ) {
+			euler.set( beta, alpha, - gamma, 'YXZ' );                       // 'ZXY' for the device, but 'YXZ' for us
+			quaternion.setFromEuler( euler );                               // orient the device
+			quaternion.multiply( q1 );                                      // camera looks out the back of the device, not the top
+			quaternion.multiply( q0.setFromAxisAngle( zee, - orient ) );    // adjust for screen orientation
+		};
+	}();
+
+
+	function Quat2Angle( x, y, z, w ) {
+		var pitch, roll, yaw,
+			test = x * y + z * w,
+			sqx,
+			sqy,
+			sqz;
+
+		if (test > 0.499) { // singularity at north pole
+			yaw = 2 * Math.atan2(x, w);
+			pitch = Math.PI / 2;
+			roll = 0;
+		} else if (test < -0.499) { // singularity at south pole
+			yaw = -2 * Math.atan2(x, w);
+			pitch = -Math.PI / 2;
+			roll = 0;
+		} else {
+			sqx = x * x;
+			sqy = y * y;
+			sqz = z * z;
+			yaw = Math.atan2(2 * y * w - 2 * x * z, 1 - 2 * sqy - 2 * sqz);
+			pitch = Math.asin(2 * test);
+			roll = Math.atan2(2 * x * w - 2 * y * z, 1 - 2 * sqx - 2 * sqz);
+		}
+
+		return new THREE.Vector3( pitch, roll, yaw);
+	}
+
+	function onDeviceOrientationChangeEvent( event ) {
+		scope.deviceOrientation = event;
+		hasMovedOrientationControls = true;
+	}
+
+	function onScreenOrientationChangeEvent( event ) {
+		scope.screenOrientation = window.orientation || 0;
+		hasMovedOrientationControls = true;
+	}
 
 	function getAutoRotationAngle() {
 		return 2 * Math.PI / 60 / 60 * scope.autoRotateSpeed;
@@ -352,6 +443,8 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 			// rotating up and down along whole screen attempts to go 360, but limited to 180
 			scope.rotateUp( rightValue, {x: event.clientX, y: event.clientY} );
 
+			isOrbitEvent = true;
+
 			rotateStart.copy( rotateEnd );
 
 		} else if ( state === STATE.DOLLY ) {
@@ -367,6 +460,8 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 				scope.dollyOut();
 			}
 
+			isOrbitEvent = true;
+
 			dollyStart.copy( dollyEnd );
 
 		} else if ( state === STATE.PAN ) {
@@ -378,6 +473,8 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 			
 			scope.pan( panDelta );
 
+			isOrbitEvent = true;
+
 			panStart.copy( panEnd );
 
 		}
@@ -386,7 +483,6 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 		scope.update();
 
 	}
-
 
 	//	Ref: https://gist.github.com/gre/1650294
 	function easeOutCubic(t) { return (--t)*t*t+1; };
@@ -454,6 +550,8 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 		scope.domElement.removeEventListener( 'mousemove', onMouseMove, false );
 		scope.domElement.removeEventListener( 'mouseup', onMouseUp, false );
 
+		isOrbitEvent = false;
+
 		state = STATE.NONE;
 
 		if(scope.decelerateSpin) {
@@ -472,6 +570,8 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 		} else if ( event.detail ) { // Firefox
 			delta = - event.detail;
 		}
+
+		isOrbitEvent = true;
 
 		if ( delta > 0 ) {
 			scope.dollyOut();
@@ -513,6 +613,8 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 		// Greggman fix: https://github.com/greggman/three.js/commit/fde9f9917d6d8381f06bf22cdff766029d1761be
 		if ( needUpdate ) {
 
+			isOrbitEvent = true;
+
 			scope.update();
 
 		}
@@ -522,6 +624,8 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 	function touchstart( event ) {
 
 		if ( scope.enabled === false ) { return; }
+
+		isOrbitEvent = true;
 
 		switch ( event.touches.length ) {
 
@@ -553,6 +657,7 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 				break;
 
 			default:
+				isOrbitEvent = false;
 				state = STATE.NONE;
 
 		}
@@ -568,6 +673,8 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 		canceldecelerate = true;
 
 		var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
+
+		isOrbitEvent = true;
 
 		switch ( event.touches.length ) {
 
@@ -622,6 +729,7 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 				break;
 
 			default:
+				isOrbitEvent = false;
 				state = STATE.NONE;
 
 		}
@@ -632,12 +740,17 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 
 		if ( scope.enabled === false ) { return; }
 
+		isOrbitEvent = false;
 		state = STATE.NONE;
 
 		if(scope.decelerateSpin) {
 			decelerate(diffLeft, diffUp);
 		}
 	}
+
+	//	Add device orientation - we cannot use scope.useDeviceOrientation to exclude this, as it's set after we initialise
+	window.addEventListener( 'deviceorientation', onDeviceOrientationChangeEvent, false );
+	window.addEventListener( 'orientationchange', onScreenOrientationChangeEvent, false );
 
 	this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
 	this.localElement.addEventListener( 'mousedown', onMouseDown, false );

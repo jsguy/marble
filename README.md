@@ -95,7 +95,7 @@ You can specify options using `data` attributes on the script tag, or passed int
 * **overlay** - overlay a pixel mask to darken the image slightly - the can help with the visual apperance of some images, and is useful for background images, default is false
 * **menutimeout** - how long till the menu auto-hides after mouseover in ms, default is 3500
 * **fps** - specify how many FPS to use, (1-60), default is 60, this might be useful to limit CPU/GPU usage if you have several spinning 360° images on the page at once
-* **usedeviceorientation** - allow mobile devices to move the image using the accelerometer, default is false mainly due to some phones accelerometer implementation being faulty
+* **usedeviceorientation** - allow mobile devices to move the image using the accelerometer, default is true
 * **slideshowdelay** - time to show each picture in milliseconds, default is 9000
 * **slideshowindex** - what slide to start on (0-indexed), default is 0
 

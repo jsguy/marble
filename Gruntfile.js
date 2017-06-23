@@ -5,7 +5,6 @@ module.exports = function(grunt) {
 		'src/marble_header.js',
 		'node_modules/three/build/three.js',
 		'src/three.stereo-effect.js',
-		'src/three.deviceorientationcontrols.js',
 		'src/three.orbitcontrols.js',
 		'node_modules/ulib/src/ulib.pubsub.js',
 		'node_modules/ulib/src/ulib.utils.js',

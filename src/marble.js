@@ -82,7 +82,7 @@ if(!win.marble) {
 			addcdnparameter: true,
 			cdnparameter: "cdnkey",
 			clicktotogglespin: false,
-			usedeviceorientation: false,
+			usedeviceorientation: true,
 			behave: true,
 			showmenu: true,
 			overlay: false,
@@ -113,19 +113,6 @@ if(!win.marble) {
 		sphereMaterial,
 		sphereMesh,
 		textureLoader,
-		//	Control variable
-		allowOrbitControls = false,
-		hadOrbitControl = false,
-		//	Mouse variables
-		movedMouse = false,
-		userX = 0,
-		userY = 0,
-		userHorizontal = 0,
-		userVertical = 0,
-		prevX,
-		prevY,
-		diffX,
-		diffY,
 		//	Ref: https://gist.github.com/gre/1650294
 		easeOutCubic = function (t) { return (--t)*t*t+1; },
 		//	args.fps will allow the user to set the fps - this can greatly reduce CPU load, with many pics on a page
@@ -139,15 +126,9 @@ if(!win.marble) {
 		ready = function(){},
 		renderReady = function(){},
 
-		//	Device orientation
-		orientation,
-		deviceOrientation,
-		doLast = {alpha: null, beta: null, gamma: null},
-		doDiff = {alpha: 0, beta: 0, gamma: 0},
+		//	Controls
 		orbitControls,
-		orientationControls,
-//		clock,
-			clock = new THREE.Clock(),
+		clock = new THREE.Clock(),
 		canRender = true,
 
 		sizeTimer,
@@ -224,51 +205,11 @@ if(!win.marble) {
 			if (frameDelta > frameInterval) {
 				frameThen = frameNow - (frameDelta % frameInterval);
 
-				
-
-/*
-				if(args.usedeviceorientation && deviceOrientation) {
-					//	Find the differences
-					for(var i in doLast) if(doLast.hasOwnProperty(i)){{
-						if(doLast[i] === null) {
-							doDiff[i] = 0;
-						} else {
-							doDiff[i] = deviceOrientation[i] - doLast[i];
-						}
-						doLast[i] = deviceOrientation[i];
-					}}
-
-					if(doDiff.alpha) {
-						args.horizontal -= doDiff.alpha;
-					}
-					if(orientation === 0) {
-						if(doDiff.beta) {
-							args.vertical += doDiff.beta;
-						}
-					} else {
-						if(doDiff.gamma) {
-							args.vertical += doDiff.gamma * (orientation * -1/90);
-						}
-					}
-				}
-*/
-
-				//console.log('clock', clock);
-
 				if(args.allowuserinteraction) {
-					if(args.usedeviceorientation && orientationControls) {
-//						orientationControls.update(clock.getDelta());
-
-						orientationControls.update(hadOrbitControl);
-						hadOrbitControl = false;
-
-					}
-					if(allowOrbitControls && orbitControls) {
+					if(orbitControls) {
 						orbitControls.update(clock.getDelta());
 					}
 				}
-
-
 
 				//	If we want to keep spinning
 				if(!useroverride && args.startspin && !!args.spin){
@@ -308,21 +249,6 @@ if(!win.marble) {
 
 		//	Set default cube order depending on cube kr mode
 		args.imgcubeorder = args.imgcubeorder || (args.imgcubekrmode? "r,l,u,d,b,f":  "r,l,u,d,f,b");
-
-		//	Add device orientation support
-		//	TODO: remove?
-		/*
-		if(args.usedeviceorientation && window.DeviceOrientationEvent) {
-			window.addEventListener('deviceorientation', function(e){
-				orientation = window.orientation;
-				deviceOrientation = {
-					alpha: e.alpha,
-					beta: e.beta,
-					gamma: e.gamma
-				};
-			}, false);
-		}
-*/
 
 		//	Behave ourselves when others are active
 		if(args.behave) {
@@ -384,9 +310,6 @@ if(!win.marble) {
 			}
 
 			if(args.allowuserinteraction) {
-
-
-				console.log('set orbitcontrols');
 				orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
 				
 				orbitControls.target.set(
@@ -397,19 +320,8 @@ if(!win.marble) {
 				
 				orbitControls.noPan = false;
 				orbitControls.noZoom = !args.allowmousewheel;
-
-
-				//	Add device orientation support
-				if(args.usedeviceorientation && window.DeviceOrientationEvent) {
-					//element.addEventListener('click', fullscreen, false);
-					orientationControls = new THREE.DeviceOrientationControls(camera, true);
-					orientationControls.connect();
-					//orientationControls.update();
-					console.log('SET orientation controls');
-				}
-
+				orbitControls.useDeviceOrientation = args.usedeviceorientation;
 			}
-
 
 			initRender(args.width, args.height);
 
@@ -1021,13 +933,6 @@ if(!win.marble) {
 					for(var i = 0; i < events.length; i += 1) {
 						addSpecificEvent(events[i], func);						
 					}
-				},
-				allowOrbitUpdate = function(){
-					allowOrbitControls = true;
-				},
-				disallowOrbitUpdate = function(){
-					allowOrbitControls = false;
-					hadOrbitControl = true;
 				};
 
 			//	If we allow user interaction
@@ -1041,16 +946,6 @@ if(!win.marble) {
 				addEvents("mouseout", hideMenuOnTimeout);
 				addEvents("touchend", hideMenuOnTimeout);
 				addEvents("pointermove", hideMenuOnTimeout);
-
-
-
-
-				addEvents('mousedown mousewheel DOMMouseScroll keydown touchstart pointerdown', allowOrbitUpdate);
-				addEvents('mouseup keyup touchend pointerup', disallowOrbitUpdate);
-
-
-
-
 			}
 
 			//	Animate the image on startup,
