@@ -80,7 +80,6 @@ You can specify options using `data` attributes on the script tag, or passed int
 * **spin** - how many degrees to turn per second, when spinning is enabled, default is 3, set to 0 to disable spinning
 * **startspin** - start spinning when the photo loads
 * **animate** - decelerate animation when the photo loads
-* **animatezoom** - animates a zoom from zoommin to 0 on startup, default is false
 * **allowmousewheel** - do we allow the mouse wheel to zoom in/out, default is true
 * **allowcrossorigin** - do we allow the image to be loaded from a different domain, (domain must support [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)), default is true
 * **addcdnparameter** - add a cdn parameter to the URL of the image request, useful for when CORS headers are being ignored, due to CDN prefretch caching, default is false

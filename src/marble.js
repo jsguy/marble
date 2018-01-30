@@ -68,7 +68,6 @@ if(!win.marble) {
 			spin: 9,
 			startspin: true,
 			animate: true,
-			animatezoom: false,
 			allowmousewheel: true,
 			allowuserinteraction: true,
 			allowfullscreen: true,
@@ -220,6 +219,7 @@ if(!win.marble) {
 				args.vertical = Math.max(-85, Math.min(85, args.vertical));
 
 				//	Adjust the position
+				//	TODO: Autozoom and this should be done in the controls.js file.
 				sphereMesh.rotation.y = THREE.Math.degToRad(args.horizontal);
 				sphereMesh.rotation.x = THREE.Math.degToRad(360-args.vertical);
 				sphereMesh.position.z = args.zoom;
@@ -956,25 +956,7 @@ if(!win.marble) {
 				//	Wait rendering engine to start.
 				renderReady = function(){
 					if(!otherImageActive) {
-						decelerate(spinAmount, 0);
-
-						if(args.animatezoom) {
-							var anizoom = args.zoommin,
-								anizoomend = args.zoom,
-								animateZoom = function(){
-									anizoom += 2.5 + 1/easeOutCubic(args.zoommin/anizoom + 1)*40/4;
-
-									if(anizoom > anizoomend) {
-										anizoom = anizoomend;
-									}
-
-									args.zoom = anizoom;
-									if(anizoom<anizoomend) {
-										requestAnimationFrame(animateZoom);
-									}
-								};
-							requestAnimationFrame(animateZoom);
-						}
+						//	Do stuff...
 					}
 				};
 			}

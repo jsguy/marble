@@ -263,6 +263,46 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 
 	this.update = function () {
 
+		var setObjectQuaternion = function () {
+				var zee = new THREE.Vector3( 0, 0, 1 );
+				var euler = new THREE.Euler();
+				var q0 = new THREE.Quaternion();
+				var q1 = new THREE.Quaternion(  - Math.sqrt( 0.5 ), 0, 0,  Math.sqrt( 0.5 ) ); // - PI/2 around the x-axis
+
+				return function ( quaternion, alpha, beta, gamma, orient ) {
+					euler.set( beta, alpha, - gamma, 'YXZ' );                       // 'ZXY' for the device, but 'YXZ' for us
+					quaternion.setFromEuler( euler );                               // orient the device
+					quaternion.multiply( q1 );                                      // camera looks out the back of the device, not the top
+					quaternion.multiply( q0.setFromAxisAngle( zee, - orient ) );    // adjust for screen orientation
+				};
+			}(),
+			Quat2Angle = function( x, y, z, w ) {
+				var pitch, roll, yaw,
+					test = x * y + z * w,
+					sqx,
+					sqy,
+					sqz;
+
+				if (test > 0.499) { // singularity at north pole
+					yaw = 2 * Math.atan2(x, w);
+					pitch = Math.PI / 2;
+					roll = 0;
+				} else if (test < -0.499) { // singularity at south pole
+					yaw = -2 * Math.atan2(x, w);
+					pitch = -Math.PI / 2;
+					roll = 0;
+				} else {
+					sqx = x * x;
+					sqy = y * y;
+					sqz = z * z;
+					yaw = Math.atan2(2 * y * w - 2 * x * z, 1 - 2 * sqy - 2 * sqz);
+					pitch = Math.asin(2 * test);
+					roll = Math.atan2(2 * x * w - 2 * y * z, 1 - 2 * sqx - 2 * sqz);
+				}
+
+				return new THREE.Vector3( pitch, roll, yaw);
+			};
+
 		//	See if we're using the device orientation
 		if(!isOrbitEvent && scope.useDeviceOrientation && hasMovedOrientationControls) {
 			var alpha = scope.deviceOrientation.alpha ? THREE.Math.degToRad(scope.deviceOrientation.alpha) : 0; // Z
@@ -326,49 +366,6 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 			lastPosition.copy( this.object.position );
 		}
 	};
-
-
-	var setObjectQuaternion = function () {
-		var zee = new THREE.Vector3( 0, 0, 1 );
-		var euler = new THREE.Euler();
-		var q0 = new THREE.Quaternion();
-		var q1 = new THREE.Quaternion(  - Math.sqrt( 0.5 ), 0, 0,  Math.sqrt( 0.5 ) ); // - PI/2 around the x-axis
-
-		return function ( quaternion, alpha, beta, gamma, orient ) {
-			euler.set( beta, alpha, - gamma, 'YXZ' );                       // 'ZXY' for the device, but 'YXZ' for us
-			quaternion.setFromEuler( euler );                               // orient the device
-			quaternion.multiply( q1 );                                      // camera looks out the back of the device, not the top
-			quaternion.multiply( q0.setFromAxisAngle( zee, - orient ) );    // adjust for screen orientation
-		};
-	}();
-
-
-	function Quat2Angle( x, y, z, w ) {
-		var pitch, roll, yaw,
-			test = x * y + z * w,
-			sqx,
-			sqy,
-			sqz;
-
-		if (test > 0.499) { // singularity at north pole
-			yaw = 2 * Math.atan2(x, w);
-			pitch = Math.PI / 2;
-			roll = 0;
-		} else if (test < -0.499) { // singularity at south pole
-			yaw = -2 * Math.atan2(x, w);
-			pitch = -Math.PI / 2;
-			roll = 0;
-		} else {
-			sqx = x * x;
-			sqy = y * y;
-			sqz = z * z;
-			yaw = Math.atan2(2 * y * w - 2 * x * z, 1 - 2 * sqy - 2 * sqz);
-			pitch = Math.asin(2 * test);
-			roll = Math.atan2(2 * x * w - 2 * y * z, 1 - 2 * sqx - 2 * sqz);
-		}
-
-		return new THREE.Vector3( pitch, roll, yaw);
-	}
 
 	function onDeviceOrientationChangeEvent( event ) {
 		scope.deviceOrientation = event;
