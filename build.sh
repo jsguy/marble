@@ -1,0 +1,2 @@
+# ok, so grunt doesn't install, etc - this will at least allow building a dist
+cat ./src/marble_header.js ./node_modules/three/build/three.js ./src/three.stereo-effect.js ./src/three.orbitcontrols.js ./node_modules/ulib/src/ulib.pubsub.js ./node_modules/ulib/src/ulib.utils.js ./node_modules/ulib/src/ulib.url.js ./src/screenfull.js ./src/pep.js ./src/prefix.js ./src/detector.js ./src/marble.js ./src/marble_footer.js > ./dist/marble-latest.js
